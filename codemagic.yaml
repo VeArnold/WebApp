@@ -1,0 +1,31 @@
+# Automatically generated on 2020-09-28 UTC from https://codemagic.io/app/5f71c39670eb4907622f8f07/settings
+# Note that this configuration is not an exact match to UI settings. Review and adjust as necessary.
+
+workflows:
+  default-workflow:
+    name: Default Workflow
+    max_build_duration: 60
+    environment:
+      vars:
+        FIREBASE_TOKEN: Encrypted(Z0FBQUFBQmZjZE5lcHdabEhiNUxlbjF1MUltdUw4aVZuMktFZnpwVE5IVVp3NkZxNlAtUmgxT2VGOUpoYUhUUG81M2pISGVCa19nS0dNRjllc1BvNUFUeUtyRElIQVVNYXgycG43YlBBd1VwY1NTMGRXcU1hZ0VTZ0VYWUw2LUcyZWtXUDRib0lDbmdLSE5WSFdWUVdWa3p6M3h3eGE4TEFaTzBWOFQ1Z3ZZMnJMaTBHQUp3dUp5Tnd2Q3FVN0RQdmNYeVdJYVBEdUpvaUFtM24yTWlNMElpUjlUOXl3MDd3QT09)
+      flutter: beta
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - flutter packages pub get
+      - flutter config --enable-web
+      - name: Build Web
+        script: |
+          flutter build web --release
+          cd build/web
+          7z a -r ../web.zip ./*
+      - name: Publish to Firebase Hosting
+        script: |
+          firebase deploy --token "$FIREBASE_TOKEN"
+    artifacts:
+      - build/web.zip
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - arnold.veltmann@ut.ee
